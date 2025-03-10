@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -20,11 +21,13 @@ public class ExtraccionBBDDReader {
 		this.dataSource = dataSource;
 	}
 	
+	@Bean
     public JdbcCursorItemReader<Pedido> reader() {
         return new JdbcCursorItemReaderBuilder<Pedido>()
                 .dataSource(dataSource)
                 .sql("SELECT * FROM pedidos")
                 .rowMapper(new PedidoRowMapper())
+                .name("extraccionBBDDReader")
                 .build();
     }
     
