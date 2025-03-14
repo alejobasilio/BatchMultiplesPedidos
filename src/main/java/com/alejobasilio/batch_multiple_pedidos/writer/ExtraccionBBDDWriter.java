@@ -13,7 +13,7 @@ import com.alejobasilio.batch_multiple_pedidos.model.Pedido;
 public class ExtraccionBBDDWriter extends FlatFileItemWriter<Pedido>{
 
 	public ExtraccionBBDDWriter() {
-		setResource(new FileSystemResource("pedidos_pendientes.csv"));
+		setResource(new FileSystemResource("src/main/resources/output/pedidos_pendientes.csv"));
 		setAppendAllowed(false);
 		
 		DelimitedLineAggregator<Pedido> aggregator = new DelimitedLineAggregator<>();
