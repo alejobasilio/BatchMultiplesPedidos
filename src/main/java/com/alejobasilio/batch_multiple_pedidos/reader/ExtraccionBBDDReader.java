@@ -4,7 +4,6 @@ import javax.sql.DataSource;
 
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,7 @@ public class ExtraccionBBDDReader {
 
 	private DataSource dataSource;
 
-	@Autowired
+	
 	public ExtraccionBBDDReader(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}

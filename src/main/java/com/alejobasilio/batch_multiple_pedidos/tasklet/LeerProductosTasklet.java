@@ -2,7 +2,6 @@ package com.alejobasilio.batch_multiple_pedidos.tasklet;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.batch.core.StepContribution;
@@ -27,7 +26,7 @@ public class LeerProductosTasklet implements Tasklet{
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
             
-		 try (BufferedReader reader = new BufferedReader(new InputStreamReader(new ClassPathResource("productos_validos.dat").getInputStream())))  {
+		 try (BufferedReader reader = new BufferedReader(new InputStreamReader(new ClassPathResource("input/productos_validos.dat").getInputStream())))  {
                 String line;
                 while ((line = reader.readLine()) != null) {
                 	 String[] campos = line.split(";");

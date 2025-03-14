@@ -1,7 +1,5 @@
 package com.alejobasilio.batch_multiple_pedidos.reader;
 
-import java.io.File;
-
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
