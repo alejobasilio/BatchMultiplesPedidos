@@ -1,6 +1,10 @@
 package com.alejobasilio.batch_multiple_pedidos.writer;
 
 
+import java.io.IOException;
+import java.io.Writer;
+
+import org.springframework.batch.item.file.FlatFileHeaderCallback;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
@@ -23,5 +27,13 @@ public class ExtraccionBBDDWriter extends FlatFileItemWriter<Pedido>{
 		aggregator.setFieldExtractor(extractor);
 		
 		setLineAggregator(aggregator);
+		
+		setHeaderCallback(new FlatFileHeaderCallback() {
+			
+			@Override
+			public void writeHeader(Writer writer) throws IOException {
+				 writer.write("ID;Cliente;ID Producto;Importe");
+			}
+		});
 	}
 }
