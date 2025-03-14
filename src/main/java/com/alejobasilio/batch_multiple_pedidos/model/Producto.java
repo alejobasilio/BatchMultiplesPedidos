@@ -11,13 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Pedido implements Serializable{
+public class Producto implements Serializable{
 
 	private Long id;
-	private String cliente;
-	private Long id_producto;
-	private Double importe;
-	private boolean estado;
-	private boolean valido;
-
+	private String producto;
+	private Double precio;
+	private String moneda;
 }
