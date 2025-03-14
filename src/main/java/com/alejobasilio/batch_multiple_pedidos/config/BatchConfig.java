@@ -39,12 +39,12 @@ import com.alejobasilio.batch_multiple_pedidos.writer.ValidacionProductosWriter;
 public class BatchConfig {
 
 	@Bean
-	public List<Producto> productosValidos() {
+	 List<Producto> productosValidos() {
 		return new ArrayList<>();
 	}
 
 	@Bean
-	public DataSource dataSource() {
+	 DataSource dataSource() {
 		DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
 		dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
 		dataSourceBuilder.url("jdbc:mysql://localhost:3306/batch");
@@ -63,7 +63,7 @@ public class BatchConfig {
 	}
 
 	@Bean
-	public Step extraccionBBDDStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+	 Step extraccionBBDDStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new StepBuilder("extraccionBBDDStep", jobRepository)
 				.<Pedido, Pedido>chunk(1, transactionManager)
 				.allowStartIfComplete(true)
@@ -74,52 +74,52 @@ public class BatchConfig {
 	}
 
 	@Bean
-	public ValidacionProductosWriter validacionProductosWriter() {
+	 ValidacionProductosWriter validacionProductosWriter() {
 		return new ValidacionProductosWriter();
 	}
 
 	@Bean
-	public Tasklet leerProductosValidosTasklet(List<Producto> productosValidos) {
+	 Tasklet leerProductosValidosTasklet(List<Producto> productosValidos) {
 		return new LeerProductosTasklet(productosValidos);
 	}
 
 	
 	@Bean
-	public Job borrarFicherosOutputJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+	 Job borrarFicherosOutputJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new JobBuilder("borarraFicherosOutputJob", jobRepository).flow(
 				borrarFicherosOutputStep(jobRepository, transactionManager))
 				.end().build();
 	}
 
 	@Bean
-	public Step borrarFicherosOutputStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+	 Step borrarFicherosOutputStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new StepBuilder("leerProductosStep", jobRepository)
 				.tasklet(new BorrarFicherosOutputTasklet(), transactionManager).build();
 	}
 	
 	
 	@Bean
-	public Job leerProductosJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+	 Job leerProductosJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new JobBuilder("leerProductosJob", jobRepository).flow(
 				leerProductosStep(jobRepository, transactionManager, leerProductosValidosTasklet(productosValidos())))
 				.end().build();
 	}
 
 	@Bean
-	public Job validarPedidosJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+	 Job validarPedidosJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new JobBuilder("validacionPedidosJob", jobRepository)
 				.flow(validarPedidosStep(jobRepository, transactionManager)).end().build();
 	}
 
 	@Bean
-	public Step leerProductosStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+	 Step leerProductosStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
 			Tasklet leerProductosValidosTasklet) {
 		return new StepBuilder("leerProductosStep", jobRepository)
 				.tasklet(leerProductosValidosTasklet, transactionManager).build();
 	}
 
 	@Bean
-	public Step validarPedidosStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+	 Step validarPedidosStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new StepBuilder("validarPedidosStep", jobRepository).<Pedido, Pedido>chunk(10, transactionManager)
 				.reader(new PedidosPendientesReader().leerPedidosPendientesReader())
 				.processor(new ValidacionProductosProcessor(productosValidos()))
@@ -127,20 +127,20 @@ public class BatchConfig {
 	}
 
 	@Bean
-	public Job pedidosValidosToBBDD(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+	 Job pedidosValidosToBBDD(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new JobBuilder("pedidosValidosToBBDDJob", jobRepository)
 				.flow(pedidosValidosToBBDDStep(jobRepository, transactionManager)).end().build();
 	}
 
 	@Bean
-	public Step pedidosValidosToBBDDStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+	 Step pedidosValidosToBBDDStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new StepBuilder("pedidosValidosToBBDDStep", jobRepository).<Pedido, Pedido>chunk(10, transactionManager)
 				.reader(new PedidosValidosToBBDDReader().jsonReader()).processor(new PedidosValidosToBBDDProcessor())
 				.writer(new PedidosValidosToBBDDWriter(dataSource()).writer()).build();
 	}
 	
 	@Bean
-	public JobLauncherMultiple jobLauncherMultiple(JobLauncher jobLauncher,
+	 JobLauncherMultiple jobLauncherMultiple(JobLauncher jobLauncher,
 			@Qualifier("borrarFicherosOutputJob") Job borrarFicherosOutputJob,
 			@Qualifier("extraccionBBDDJob") Job extraccionBBDDJob,
 			@Qualifier("leerProductosJob") Job leerProductosJob, @Qualifier("validarPedidosJob") Job validarPedidosJob,
@@ -149,9 +149,11 @@ public class BatchConfig {
 	}
 
 	@Bean
-	public CommandLineRunner commandLineRunner(JobLauncherMultiple jobLauncherMultiple) {
-		return args -> {
-			jobLauncherMultiple.runJob();
+	 CommandLineRunner commandLineRunner(JobLauncherMultiple jobLauncherMultiple) {
+		return args -> 
+		{
+			jobLauncherMultiple.runJob(); 
+			System.exit(0);
 		};
 	}
 
