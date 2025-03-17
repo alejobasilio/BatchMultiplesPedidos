@@ -12,6 +12,13 @@ import org.springframework.core.io.ClassPathResource;
 
 import com.alejobasilio.batch_multiple_pedidos.model.Producto;
 
+/**
+ * Tasklet que se utiliza para leer los productos válidos desde un archivo de texto.
+ * 
+ * @author Alejo
+ * @version 1.0
+ * @since 1.0
+ */
 public class LeerProductosTasklet implements Tasklet{
 
 	private final List<Producto> productosValidos;
