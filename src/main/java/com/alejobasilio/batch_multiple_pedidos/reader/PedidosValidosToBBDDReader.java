@@ -9,6 +9,13 @@ import org.springframework.stereotype.Component;
 
 import com.alejobasilio.batch_multiple_pedidos.model.Pedido;
 
+/**
+ * Clase que se utiliza para leer los pedidos validados desde un archivo json.
+ * 
+ * @author Alejo
+ * @version 1.0
+ * @since 1.0
+ */
 @Component
 public class PedidosValidosToBBDDReader {
 

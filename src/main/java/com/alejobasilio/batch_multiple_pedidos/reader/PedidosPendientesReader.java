@@ -9,6 +9,13 @@ import org.springframework.core.io.ClassPathResource;
 
 import com.alejobasilio.batch_multiple_pedidos.model.Pedido;
 
+/**
+ * Lector de pedidos pendientes que se utiliza para leer los pedidos pendientes desde un archivo CSV.
+ * 
+ * @author Alejo
+ * @version 1.0
+ * @since 1.0
+ */
 public class PedidosPendientesReader extends FlatFileItemReader<Pedido>{
 
 	@Bean
