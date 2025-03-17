@@ -11,6 +11,12 @@ import org.springframework.stereotype.Component;
 
 import com.alejobasilio.batch_multiple_pedidos.model.Pedido;
 
+/**
+ * Clase que se utiliza para escribir los pedidos válidos en la base de datos.
+ * @author Alejo
+ * @version 1.0
+ * @since 1.0
+ */
 @Component
 public class PedidosValidosToBBDDWriter {
 
@@ -29,6 +35,9 @@ public class PedidosValidosToBBDDWriter {
 	    return writer;
 	}
 	
+	/**
+     * Clase interna que se utiliza para establecer los valores de los parámetros de la consulta SQL.
+     */
 	public class CustomItemPreparedStatementSetter implements ItemPreparedStatementSetter<Pedido>{
 
 		@Override

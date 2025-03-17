@@ -11,6 +11,13 @@ import com.alejobasilio.batch_multiple_pedidos.model.Pedido;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Escritor de pedidos validados que se utiliza para escribir los pedidos validados en un archivo JSON.
+ * 
+ * @author Alejo
+ * @version 1.0
+ * @since 1.0
+ */
 public class ValidacionProductosWriter {
 	@Bean
 	public ItemWriter<Pedido> escribirPedidosValidadosWriter() {

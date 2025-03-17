@@ -12,6 +12,13 @@ import org.springframework.stereotype.Component;
 
 import com.alejobasilio.batch_multiple_pedidos.model.Pedido;
 
+/**
+ * Clase que se utiliza para escribir los pedidos pendientes en un archivo CSV.
+ * 
+ * @author Alejo
+ * @version 1.0
+ * @since 1.0
+ */
 @Component
 public class ExtraccionBBDDWriter extends FlatFileItemWriter<Pedido> {
 
