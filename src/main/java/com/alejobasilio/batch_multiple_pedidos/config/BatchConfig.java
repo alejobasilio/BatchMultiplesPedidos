@@ -35,6 +35,13 @@ import com.alejobasilio.batch_multiple_pedidos.writer.ExtraccionBBDDWriter;
 import com.alejobasilio.batch_multiple_pedidos.writer.PedidosValidosToBBDDWriter;
 import com.alejobasilio.batch_multiple_pedidos.writer.ValidacionProductosWriter;
 
+/**
+ * Clase de configuración para la aplicación de procesamiento por lotes.
+ * 
+ * @author Alejo
+ * @version 1.0
+ * @since 1.0
+ */
 @Configuration
 public class BatchConfig {
 
@@ -43,6 +50,11 @@ public class BatchConfig {
 		return new ArrayList<>();
 	}
 
+    /**
+     * Crea un objeto DataSource que se utiliza para conectarse a la base de datos.
+     * 
+     * @return el objeto DataSource configurado.
+     */
 	@Bean
 	 DataSource dataSource() {
 		DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
@@ -53,6 +65,13 @@ public class BatchConfig {
 		return dataSourceBuilder.build();
 	}
 
+    /**
+     * Crea un objeto Job que se utiliza para definir el flujo de trabajo de extracción de datos de la base de datos.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @return el objeto Job configurado.
+     */
 	@Bean
 	Job extraccionBBDDJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 
@@ -62,6 +81,13 @@ public class BatchConfig {
 				.build();
 	}
 
+    /**
+     * Crea un objeto Step que se utiliza para definir el paso de extracción de datos de la base de datos.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @return el objeto Step configurado.
+     */
 	@Bean
 	 Step extraccionBBDDStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new StepBuilder("extraccionBBDDStep", jobRepository)
@@ -83,7 +109,13 @@ public class BatchConfig {
 		return new LeerProductosTasklet(productosValidos);
 	}
 
-	
+    /**
+     * Crea un objeto Job que se utiliza para definir el flujo de trabajo de borrado de ficheros de salida.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @return el objeto Job configurado.
+     */
 	@Bean
 	 Job borrarFicherosOutputJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new JobBuilder("borarraFicherosOutputJob", jobRepository).flow(
@@ -91,70 +123,138 @@ public class BatchConfig {
 				.end().build();
 	}
 
+    /**
+     * Crea un objeto Step que se utiliza para definir el paso de borrado de ficheros de salida.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @return el objeto Step configurado.
+     */
 	@Bean
 	 Step borrarFicherosOutputStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new StepBuilder("leerProductosStep", jobRepository)
 				.tasklet(new BorrarFicherosOutputTasklet(), transactionManager).build();
 	}
 	
-	
-	@Bean
-	 Job leerProductosJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-		return new JobBuilder("leerProductosJob", jobRepository).flow(
-				leerProductosStep(jobRepository, transactionManager, leerProductosValidosTasklet(productosValidos())))
-				.end().build();
-	}
+	/**
+     * Crea un objeto Job que se utiliza para definir el flujo de trabajo de lectura de productos.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @return el objeto Job configurado.
+     */
+    @Bean
+    Job leerProductosJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new JobBuilder("leerProductosJob", jobRepository).flow(
+                leerProductosStep(jobRepository, transactionManager, leerProductosValidosTasklet(productosValidos())))
+                .end().build();
+    }
 
-	@Bean
-	 Job validarPedidosJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-		return new JobBuilder("validacionPedidosJob", jobRepository)
-				.flow(validarPedidosStep(jobRepository, transactionManager)).end().build();
-	}
+    /**
+     * Crea un objeto Job que se utiliza para definir el flujo de trabajo de validación de pedidos.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @return el objeto Job configurado.
+     */
+    @Bean
+    Job validarPedidosJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new JobBuilder("validacionPedidosJob", jobRepository)
+                .flow(validarPedidosStep(jobRepository, transactionManager)).end().build();
+    }
 
-	@Bean
-	 Step leerProductosStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-			Tasklet leerProductosValidosTasklet) {
-		return new StepBuilder("leerProductosStep", jobRepository)
-				.tasklet(leerProductosValidosTasklet, transactionManager).build();
-	}
+    /**
+     * Crea un objeto Step que se utiliza para definir el paso de lectura de productos.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @param leerProductosValidosTasklet el objeto Tasklet que se utiliza para leer los productos válidos.
+     * @return el objeto Step configurado.
+     */
+    @Bean
+    Step leerProductosStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+            Tasklet leerProductosValidosTasklet) {
+        return new StepBuilder("leerProductosStep", jobRepository)
+                .tasklet(leerProductosValidosTasklet, transactionManager).build();
+    }
 
-	@Bean
-	 Step validarPedidosStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-		return new StepBuilder("validarPedidosStep", jobRepository).<Pedido, Pedido>chunk(10, transactionManager)
-				.reader(new PedidosPendientesReader().leerPedidosPendientesReader())
-				.processor(new ValidacionProductosProcessor(productosValidos()))
-				.writer(validacionProductosWriter().escribirPedidosValidadosWriter()).build();
-	}
+    /**
+     * Crea un objeto Step que se utiliza para definir el paso de validación de pedidos.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @return el objeto Step configurado.
+     */
+    @Bean
+    Step validarPedidosStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("validarPedidosStep", jobRepository)
+                .<Pedido, Pedido> chunk(10, transactionManager)
+                .reader(new PedidosPendientesReader().leerPedidosPendientesReader())
+                .processor(new ValidacionProductosProcessor(productosValidos()))
+                .writer(validacionProductosWriter().escribirPedidosValidadosWriter()).build();
+    }
 
-	@Bean
-	 Job pedidosValidosToBBDD(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-		return new JobBuilder("pedidosValidosToBBDDJob", jobRepository)
-				.flow(pedidosValidosToBBDDStep(jobRepository, transactionManager)).end().build();
-	}
+    /**
+     * Crea un objeto Job que se utiliza para definir el flujo de trabajo de inserción de pedidos válidos en la base de datos.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @return el objeto Job configurado.
+     */
+    @Bean
+    Job pedidosValidosToBBDD(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new JobBuilder("pedidosValidosToBBDDJob", jobRepository)
+                .flow(pedidosValidosToBBDDStep(jobRepository, transactionManager)).end().build();
+    }
 
-	@Bean
-	 Step pedidosValidosToBBDDStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-		return new StepBuilder("pedidosValidosToBBDDStep", jobRepository).<Pedido, Pedido>chunk(10, transactionManager)
-				.reader(new PedidosValidosToBBDDReader().jsonReader()).processor(new PedidosValidosToBBDDProcessor())
-				.writer(new PedidosValidosToBBDDWriter(dataSource()).writer()).build();
-	}
-	
-	@Bean
-	 JobLauncherMultiple jobLauncherMultiple(JobLauncher jobLauncher,
-			@Qualifier("borrarFicherosOutputJob") Job borrarFicherosOutputJob,
-			@Qualifier("extraccionBBDDJob") Job extraccionBBDDJob,
-			@Qualifier("leerProductosJob") Job leerProductosJob, @Qualifier("validarPedidosJob") Job validarPedidosJob,
-			@Qualifier("pedidosValidosToBBDD") Job pedidosValidosToBBDD) {
-		return new JobLauncherMultiple(jobLauncher,borrarFicherosOutputJob, extraccionBBDDJob, leerProductosJob, validarPedidosJob, pedidosValidosToBBDD);
-	}
+    /**
+     * Crea un objeto Step que se utiliza para definir el paso de inserción de pedidos válidos en la base de datos.
+     * 
+     * @param jobRepository el repositorio de trabajos que se utiliza para almacenar la información de los trabajos.
+     * @param transactionManager el administrador de transacciones que se utiliza para gestionar las transacciones de la base de datos.
+     * @return el objeto Step configurado.
+     */
+    @Bean
+    Step pedidosValidosToBBDDStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("pedidosValidosToBBDDStep", jobRepository)
+                .<Pedido, Pedido> chunk(10, transactionManager)
+                .reader(new PedidosValidosToBBDDReader().jsonReader())
+                .processor(new PedidosValidosToBBDDProcessor())
+                .writer(new PedidosValidosToBBDDWriter(dataSource()).writer()).build();
+    }
 
-	@Bean
-	 CommandLineRunner commandLineRunner(JobLauncherMultiple jobLauncherMultiple) {
-		return args -> 
-		{
-			jobLauncherMultiple.runJob(); 
-			System.exit(0);
-		};
-	}
+    /**
+     * Crea un objeto JobLauncherMultiple que se utiliza para lanzar los trabajos de forma secuencial.
+     * 
+     * @param jobLauncher el objeto JobLauncher que se utiliza para lanzar los trabajos.
+     * @param borrarFicherosOutputJob el objeto Job que se utiliza para borrar los ficheros de salida.
+     * @param extraccionBBDDJob el objeto Job que se utiliza para extraer los datos de la base de datos.
+     * @param leerProductosJob el objeto Job que se utiliza para leer los productos.
+     * @param validarPedidosJob el objeto Job que se utiliza para validar los pedidos.
+     * @param pedidosValidosToBBDD el objeto Job que se utiliza para insertar los pedidos válidos en la base de datos.
+     * @return el objeto JobLauncherMultiple configurado.
+     */
+    @Bean
+    JobLauncherMultiple jobLauncherMultiple(JobLauncher jobLauncher,
+            @Qualifier("borrarFicherosOutputJob") Job borrarFicherosOutputJob,
+            @Qualifier("extraccionBBDDJob") Job extraccionBBDDJob,
+            @Qualifier("leerProductosJob") Job leerProductosJob, @Qualifier("validarPedidosJob") Job validarPedidosJob,
+            @Qualifier("pedidosValidosToBBDD") Job pedidosValidosToBBDD) {
+        return new JobLauncherMultiple(jobLauncher, borrarFicherosOutputJob, extraccionBBDDJob, leerProductosJob, validarPedidosJob, pedidosValidosToBBDD);
+    }
+
+    /**
+     * Crea un objeto CommandLineRunner que se utiliza para lanzar los trabajos de forma secuencial al iniciar la aplicación.
+     * 
+     * @param jobLauncherMultiple el objeto JobLauncherMultiple que se utiliza para lanzar los trabajos.
+     * @return el objeto CommandLineRunner configurado.
+     */
+    @Bean
+    CommandLineRunner commandLineRunner(JobLauncherMultiple jobLauncherMultiple) {
+        return args -> {
+            jobLauncherMultiple.runJob();
+            System.exit(0);
+        };
+    }
 
 }
