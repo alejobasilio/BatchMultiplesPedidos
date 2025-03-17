@@ -7,6 +7,14 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 
+/**
+ * Clase que lanza múltiples jobs de Spring Batch de forma secuencial.
+ * 
+ * @author Alejo
+ * @version 1.0
+ * @since 1.0
+ */
+
 public class JobLauncherMultiple {
 	private Job borrarFicherosOutputJob;
 	private Job extraccionBBDDJob;
@@ -25,6 +33,9 @@ public class JobLauncherMultiple {
 		this.pedidosValidosToBBDDJob = pedidosValidosToBBDDJob;
 	}
 
+	/**
+     * Método que lanza los jobs de forma secuencial.
+     */
 	public void runJob() {
 
 		JobParameters jobborrarFicherosOutput = new JobParametersBuilder()
